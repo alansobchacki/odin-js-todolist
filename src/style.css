@@ -1,0 +1,13 @@
+#container {
+  display: grid;
+  grid-template: 1fr / 0.2fr 1fr;
+}
+
+#projects {
+  grid-column: 1 / 2;
+  background-color: lightblue;
+}
+
+#tasks {
+  grid-column: 2 / 3;
+}
