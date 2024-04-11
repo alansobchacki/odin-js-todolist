@@ -3,11 +3,23 @@
   grid-template: 1fr / 0.2fr 1fr;
 }
 
-#projects {
+#project-container {
   grid-column: 1 / 2;
   background-color: lightblue;
 }
 
-#tasks {
+#task-container {
   grid-column: 2 / 3;
+
+  display: grid;
+  gap: 10px;
+}
+
+.task {
+  background-color: lightcyan;
+  width: 300px;
+}
+
+.task-description {
+  color: pink; /* placeholder effect */
 }

@@ -3,7 +3,7 @@
 // all of their todos are put.
 // Users should be able to create new projects and choose which project their todos go into.
 
-import { Task, defaultTask } from "./task";
+import { Task } from "./task";
 
 class Project {
   constructor(title, task) {
@@ -12,6 +12,28 @@ class Project {
   }
 }
 
-const defaultProject = new Project("Your project title", [defaultTask]);
+let taskCounter = 0;
 
-export { Project, defaultProject };
+function addTaskToProject(project) {
+  const defaultTask = new Task(
+    "Your task.",
+    "Description...",
+    "",
+    1,
+    "Notes...",
+    false,
+    taskCounter,
+  );
+
+  taskCounter += 1;
+
+  project.task.push(defaultTask);
+}
+
+const defaultProject = new Project("Your project title", []);
+
+addTaskToProject(defaultProject);
+// addTaskToProject(defaultProject);
+
+// eslint-disable-next-line import/prefer-default-export
+export { defaultProject };

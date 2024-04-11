@@ -3,24 +3,16 @@
 // You might also want to include notes or even a checklist.
 
 class Task {
-  constructor(title, description, dueDate, priority, notes, checklist) {
+  constructor(title, description, dueDate, priority, notes, checklist, id) {
     this.title = title;
     this.description = description;
     this.dueDate = dueDate;
     this.priority = priority;
     this.notes = notes;
     this.checklist = checklist;
+    this.id = id;
   }
 }
-
-const defaultTask = new Task(
-  "Your task title.",
-  "Your task description.",
-  "01/01/2024",
-  1,
-  "Your task notes.",
-  false,
-);
 
 function changeTaskTitle(task) {
   const currentTask = task;
@@ -44,14 +36,6 @@ function changeTaskDescription(task) {
   }
 }
 
-function changeTaskPriority(task) {
-  // to be written
-}
-
-function changeTaskDueDate(task) {
-  // to be written
-}
-
 function changeTaskNotes(task) {
   const currentTask = task;
   const newNotes = prompt("Write your notes (1-40 characters).");
@@ -68,4 +52,4 @@ function changeTaskChecklist(task) {
   currentTask.checklist = !currentTask.checklist;
 }
 
-export { Task, defaultTask };
+export { Task, changeTaskTitle, changeTaskDescription, changeTaskNotes };
