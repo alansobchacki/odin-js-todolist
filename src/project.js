@@ -6,16 +6,19 @@
 import { Task } from "./task";
 
 class Project {
-  constructor(title, task) {
+  constructor(title, task, id) {
     this.title = title;
     this.task = task;
+    this.id = id;
   }
 }
 
+const projects = [];
+let projectCounter = 0;
 let taskCounter = 0;
 
 function addTaskToProject(project) {
-  const defaultTask = new Task(
+  const task = new Task(
     "Your task.",
     "Description...",
     "",
@@ -27,13 +30,19 @@ function addTaskToProject(project) {
 
   taskCounter += 1;
 
-  project.task.push(defaultTask);
+  project.task.push(task);
 }
 
-const defaultProject = new Project("Your project title", []);
+function buildNewProject() {
+  const project = new Project("Your project.", [], projectCounter);
 
-addTaskToProject(defaultProject);
-// addTaskToProject(defaultProject);
+  projectCounter += 1;
+
+  addTaskToProject(project);
+  projects.push(project);
+}
+
+buildNewProject();
 
 // eslint-disable-next-line import/prefer-default-export
-export { defaultProject };
+export { addTaskToProject, buildNewProject, projects };

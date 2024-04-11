@@ -12,7 +12,15 @@
   grid-column: 2 / 3;
 
   display: grid;
+  grid-template: 1fr / 1fr 1fr 1fr;
+  justify-items: center;
+  align-content: center;
+  align-items: center;
   gap: 10px;
+}
+
+#add-new-task button {
+  font-size: 40px;
 }
 
 .task {

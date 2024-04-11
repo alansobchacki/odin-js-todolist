@@ -4,56 +4,14 @@ import {
   changeTaskDescription,
   changeTaskNotes,
 } from "./task";
-import { defaultProject } from "./project";
+import { addTaskToProject, buildNewProject, projects } from "./project";
+
+const currentProject = projects[0];
 
 // index.js will handle DOM manipulation
 // DOM manipulation of tasks:
 
-function updateTaskContents(task) {
-  const updatedTask = document.getElementById(`task-${task.id}`);
-
-  // eslint-disable-next-line no-use-before-define
-  showTaskContents(updatedTask, task);
-}
-
-function customizeTitle(task) {
-  const titleContent = document.getElementById(`title-${task.id}`);
-
-  titleContent.addEventListener("click", () => {
-    changeTaskTitle(task);
-    updateTaskContents(task);
-    customizeTitle(task);
-  });
-}
-
-function customizeDescription(task) {
-  const titleContent = document.getElementById(`description-${task.id}`);
-
-  titleContent.addEventListener("click", () => {
-    changeTaskDescription(task);
-    updateTaskContents(task);
-    customizeDescription(task);
-  });
-}
-
-function customizeNotes(task) {
-  const titleContent = document.getElementById(`notes-${task.id}`);
-
-  titleContent.addEventListener("click", () => {
-    changeTaskNotes(task);
-    updateTaskContents(task);
-    customizeDescription(task);
-  });
-}
-
-// Final step - it allows all text fields in a task to be rewritten
-function allowTaskCustomization(task) {
-  customizeTitle(task);
-  customizeDescription(task);
-  customizeNotes(task);
-}
-
-// Second step - it displays the contents of our newly built task-div
+// Displays the contents of our newly built task-div
 function showTaskContents(taskContainer, task) {
   const dateInput = document.createElement("input");
   dateInput.type = "date";
@@ -73,29 +31,72 @@ function showTaskContents(taskContainer, task) {
 `;
 }
 
-// First step - it builds and appends a div with our task
+// Allows task text-fields to be customized by users
+function allowTaskCustomization(task) {
+  const titleContent = document.getElementById(`title-${task.id}`);
+  const descriptionContent = document.getElementById(`description-${task.id}`);
+  const notesContent = document.getElementById(`notes-${task.id}`);
+  const updatedTask = document.getElementById(`task-${task.id}`);
+
+  titleContent.addEventListener("click", () => {
+    changeTaskTitle(task);
+    showTaskContents(updatedTask, task);
+    allowTaskCustomization(task);
+  });
+
+  descriptionContent.addEventListener("click", () => {
+    changeTaskDescription(task);
+    showTaskContents(updatedTask, task);
+    allowTaskCustomization(task);
+  });
+
+  notesContent.addEventListener("click", () => {
+    changeTaskNotes(task);
+    showTaskContents(updatedTask, task);
+    allowTaskCustomization(task);
+  });
+}
+
+// Builds and appends a div with our task
 function buildTaskContainer(task) {
   const taskContainer = document.getElementById("task-container");
+  const addTaskButton = document.getElementById("add-new-task");
+
   const newTask = document.createElement("div");
   newTask.classList.add("task");
   newTask.setAttribute("id", `task-${task.id}`);
-  taskContainer.appendChild(newTask);
+
+  taskContainer.insertBefore(newTask, addTaskButton);
 
   const updatedTask = document.getElementById(`task-${task.id}`);
 
   showTaskContents(updatedTask, task);
 }
 
-// Our task creation process is triggered here
-function addNewTask(task) {
+function displayTask(task) {
   buildTaskContainer(task);
   allowTaskCustomization(task);
 }
 
+// Our task creation process starts with this function
+function addNewTaskButton() {
+  const addTaskButton = document.getElementById("add-new-task");
+  addTaskButton.addEventListener("click", () => {
+    addTaskToProject(currentProject);
+    displayTask(currentProject.task[currentProject.task.length - 1]);
+  });
+}
+
+addNewTaskButton();
+displayTask(currentProject.task[0]);
+
+//
 // DOM manipulation of projects:
+//
 
 function displayProject(project) {
   const projectContainer = document.getElementById("project-container");
+  const addProjectButton = document.getElementById("add-new-project");
   const newProject = document.createElement("div");
   newProject.classList.add("project");
 
@@ -103,8 +104,17 @@ function displayProject(project) {
     <p>${project.title}</p>
   `;
 
-  projectContainer.appendChild(newProject);
+  projectContainer.insertBefore(newProject, addProjectButton);
 }
 
-addNewTask(defaultProject.task[0]);
-displayProject(defaultProject);
+function addNewProjectButton() {
+  const addProjectButton = document.getElementById("add-new-project");
+
+  addProjectButton.addEventListener("click", () => {
+    buildNewProject();
+    displayProject(projects[projects.length - 1]);
+  });
+}
+
+addNewProjectButton();
+displayProject(currentProject);
