@@ -6,7 +6,7 @@ import {
 } from "./task";
 import { addTaskToProject, buildNewProject, projects } from "./project";
 
-const currentProject = projects[0];
+let currentProject = projects[0];
 
 // index.js will handle DOM manipulation
 // DOM manipulation of tasks:
@@ -78,8 +78,9 @@ function displayTask(task) {
   allowTaskCustomization(task);
 }
 
-// Our task creation process starts with this function
-function addNewTaskButton() {
+// The '+' button that adds new tasks inside the current project
+// Only needs to be called once
+function newTaskButton() {
   const addTaskButton = document.getElementById("add-new-task");
   addTaskButton.addEventListener("click", () => {
     addTaskToProject(currentProject);
@@ -87,34 +88,67 @@ function addNewTaskButton() {
   });
 }
 
-addNewTaskButton();
+// Hides the tasks from the previous project
+function hideTasks() {
+  const taskContainer = document.getElementById("task-container");
+  const tasksToClear = taskContainer.getElementsByClassName("task");
+
+  for (let i = tasksToClear.length - 1; i >= 0; i -= 1) {
+    const div = tasksToClear[i];
+    div.parentNode.removeChild(div);
+  }
+}
+
+// Shows the tasks from the current project
+function showTasks() {
+  for (let i = 0; currentProject.task.length > i; i += 1) {
+    displayTask(currentProject.task[i]);
+  }
+}
+
+newTaskButton();
 displayTask(currentProject.task[0]);
 
 //
 // DOM manipulation of projects:
 //
 
-function displayProject(project) {
+// When a project is clicked, it hides the tasks from the previous project,
+// and displays the tasks from the current project
+function showProjectTasks(project, projectId) {
+  project.addEventListener("click", () => {
+    hideTasks();
+    currentProject = projects[projectId];
+    showTasks();
+  });
+}
+
+// Builds and appends a div with our new project
+function buildProjectContainer(project) {
   const projectContainer = document.getElementById("project-container");
   const addProjectButton = document.getElementById("add-new-project");
   const newProject = document.createElement("div");
   newProject.classList.add("project");
+  newProject.setAttribute("id", `project-${project.id}`);
 
   newProject.innerHTML = `
     <p>${project.title}</p>
   `;
 
   projectContainer.insertBefore(newProject, addProjectButton);
+  showProjectTasks(newProject, project.id);
 }
 
+// The '+' button that adds new projects
+// Only needs to be called once
 function addNewProjectButton() {
   const addProjectButton = document.getElementById("add-new-project");
 
   addProjectButton.addEventListener("click", () => {
-    buildNewProject();
-    displayProject(projects[projects.length - 1]);
+    buildNewProject(); // project.js function
+    buildProjectContainer(projects[projects.length - 1]);
   });
 }
 
 addNewProjectButton();
-displayProject(currentProject);
+buildProjectContainer(currentProject);
