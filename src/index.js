@@ -28,15 +28,31 @@ function showTaskContents(taskContainer, task) {
 
   const currentTask = taskContainer;
   currentTask.innerHTML = `
-  <h1 id="${`title-${task.id}`}">${task.title}</h1>
-  ${checkboxInput.outerHTML};
-  <p id="${`description-${task.id}`}" class="task-description">${task.description}</p>
-  <p id="${`notes-${task.id}`}">${task.notes}</p>
-  <label>Due Date:</label>
-  ${dateInput.outerHTML};
-  <p>Priority:${task.priority}<p>
-  <button id="${`delete-task-${task.id}`}">//</button>
-`;
+    <div id="title-${task.id}" class="task-title">
+      <h1>${task.title}</h1>
+    </div>
+    <div class="task-checkbox">
+      ${checkboxInput.outerHTML}
+    </div>
+    <div id="description-${task.id}" class="task-description"> 
+      <p>${task.description}</p>
+    </div>
+    <div id="notes-${task.id}" class="task-notes">
+      <p><i>${task.notes}</i></p>
+    </div>
+    <div class="task-label">
+      <label>Due Date:</label>
+    </div>
+    <div class="task-due-date">
+      ${dateInput.outerHTML}
+    </div>
+    <div class="task-priority"> 
+      <p>Priority: ${task.priority}</p>
+    </div>
+    <div id="delete-task-${task.id}" class="task-button">
+      <button class="remove-button"></button>
+    </div>
+  `;
 }
 
 // Allows task text-fields to be customized by users
@@ -144,8 +160,8 @@ function showProjectContainer(projectContainer, project) {
 
   container.innerHTML = `
   <p id="project-title-${project.id}">${project.title}</p>
-  <button class="edit-button" id="edit-${project.id}">*</button>
-  <button class="remove-button" id="remove-${project.id}">-</button>
+  <button class="edit-button" id="edit-${project.id}"></button>
+  <button class="remove-button" id="remove-${project.id}"></button>
 `;
 }
 
@@ -196,12 +212,3 @@ function newProjectButton() {
 
 newProjectButton();
 buildProjectContainer(currentProject);
-
-// Tasks:
-
-// - Add a button in the project to remove a project [x]
-// - Add a button in the project to rename a project [x]
-// - Add a button in the task window to remove the task [x]
-// - Improve visuals for all buttons [ ]
-// - Improve visuals for project dashboard [ ]
-// - Improve visuals for task containers [ ]

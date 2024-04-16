@@ -15,11 +15,11 @@ let taskCounter = 0;
 
 function buildNewTask(project) {
   const task = new Task(
-    "Your task.",
-    "Description...",
+    "Insert a title.",
+    "Insert a description...",
     "",
-    1,
-    "Notes...",
+    "Low",
+    "Insert notes...",
     false,
     taskCounter,
     false,

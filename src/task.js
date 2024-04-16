@@ -26,9 +26,9 @@ class Task {
 
 function changeTaskTitle(task) {
   const currentTask = task;
-  const newTitle = prompt("Write your task title (1-24 characters).");
+  const newTitle = prompt("Write your task title (1-16 characters).");
 
-  if (newTitle.length > 1 && newTitle.length < 24) {
+  if (newTitle.length > 1 && newTitle.length < 16) {
     currentTask.title = newTitle;
   } else {
     alert("Invalid title. Please try again.");
@@ -37,9 +37,9 @@ function changeTaskTitle(task) {
 
 function changeTaskDescription(task) {
   const currentTask = task;
-  const newDescription = prompt("Write your description (1-200 characters).");
+  const newDescription = prompt("Write your description (1-100 characters).");
 
-  if (newDescription.length > 1 && newDescription.length < 200) {
+  if (newDescription.length > 1 && newDescription.length < 100) {
     currentTask.description = newDescription;
   } else {
     alert("Invalid description. Please try again.");
