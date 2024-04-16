@@ -4,8 +4,32 @@
 }
 
 #project-container {
-  grid-column: 1 / 2;
+  display: grid;
+
+  justify-content: space-evenly;
   background-color: lightblue;
+}
+
+.project {
+  display: grid;
+  grid-template: 1fr / 1fr 0.3fr 0.3fr;
+  align-items: center;
+}
+
+.project p {
+  grid-column: 1 / 2;
+}
+
+.edit-button {
+  grid-column: 2 / 3;
+  height: 25px;
+  width: 25px;
+}
+
+.remove-button {
+  grid-column: 3 / 4;
+  height: 25px;
+  width: 25px;
 }
 
 #task-container {

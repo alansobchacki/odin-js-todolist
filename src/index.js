@@ -3,8 +3,15 @@ import {
   changeTaskTitle,
   changeTaskDescription,
   changeTaskNotes,
+  deleteTask,
 } from "./task";
-import { addTaskToProject, buildNewProject, projects } from "./project";
+import {
+  buildNewTask,
+  buildNewProject,
+  changeProjectTitle,
+  removeProject,
+  projects,
+} from "./project";
 
 let currentProject = projects[0];
 
@@ -28,6 +35,7 @@ function showTaskContents(taskContainer, task) {
   <label>Due Date:</label>
   ${dateInput.outerHTML};
   <p>Priority:${task.priority}<p>
+  <button id="${`delete-task-${task.id}`}">//</button>
 `;
 }
 
@@ -36,6 +44,7 @@ function allowTaskCustomization(task) {
   const titleContent = document.getElementById(`title-${task.id}`);
   const descriptionContent = document.getElementById(`description-${task.id}`);
   const notesContent = document.getElementById(`notes-${task.id}`);
+  const deleteTaskButton = document.getElementById(`delete-task-${task.id}`);
   const updatedTask = document.getElementById(`task-${task.id}`);
 
   titleContent.addEventListener("click", () => {
@@ -55,6 +64,11 @@ function allowTaskCustomization(task) {
     showTaskContents(updatedTask, task);
     allowTaskCustomization(task);
   });
+
+  deleteTaskButton.addEventListener("click", () => {
+    deleteTask(task);
+    updatedTask.remove();
+  });
 }
 
 // Builds and appends a div with our task
@@ -62,29 +76,28 @@ function buildTaskContainer(task) {
   const taskContainer = document.getElementById("task-container");
   const addTaskButton = document.getElementById("add-new-task");
 
-  const newTask = document.createElement("div");
-  newTask.classList.add("task");
-  newTask.setAttribute("id", `task-${task.id}`);
+  if (task.deleted === false) {
+    const newTask = document.createElement("div");
+    newTask.classList.add("task");
+    newTask.setAttribute("id", `task-${task.id}`);
 
-  taskContainer.insertBefore(newTask, addTaskButton);
+    taskContainer.insertBefore(newTask, addTaskButton);
 
-  const updatedTask = document.getElementById(`task-${task.id}`);
+    const updatedTask = document.getElementById(`task-${task.id}`);
 
-  showTaskContents(updatedTask, task);
-}
-
-function displayTask(task) {
-  buildTaskContainer(task);
-  allowTaskCustomization(task);
+    showTaskContents(updatedTask, task);
+    allowTaskCustomization(task);
+  }
 }
 
 // The '+' button that adds new tasks inside the current project
-// Only needs to be called once
 function newTaskButton() {
   const addTaskButton = document.getElementById("add-new-task");
   addTaskButton.addEventListener("click", () => {
-    addTaskToProject(currentProject);
-    displayTask(currentProject.task[currentProject.task.length - 1]);
+    if (currentProject.deleted === false) {
+      buildNewTask(currentProject);
+      buildTaskContainer(currentProject.task[currentProject.task.length - 1]);
+    }
   });
 }
 
@@ -102,24 +115,57 @@ function hideTasks() {
 // Shows the tasks from the current project
 function showTasks() {
   for (let i = 0; currentProject.task.length > i; i += 1) {
-    displayTask(currentProject.task[i]);
+    buildTaskContainer(currentProject.task[i]);
   }
 }
 
 newTaskButton();
-displayTask(currentProject.task[0]);
+buildTaskContainer(currentProject.task[0]);
 
 //
 // DOM manipulation of projects:
 //
 
-// When a project is clicked, it hides the tasks from the previous project,
-// and displays the tasks from the current project
-function showProjectTasks(project, projectId) {
-  project.addEventListener("click", () => {
+// Hides tasks from previous project, sets the clicked project as current project,
+// and shows tasks from the new current project
+function showProjectContents(projectId) {
+  const projectTitle = document.getElementById(`project-title-${projectId}`);
+
+  projectTitle.addEventListener("click", () => {
     hideTasks();
     currentProject = projects[projectId];
     showTasks();
+  });
+}
+
+// Shows a project's title and customizing buttons
+function showProjectContainer(projectContainer, project) {
+  const container = projectContainer;
+
+  container.innerHTML = `
+  <p id="project-title-${project.id}">${project.title}</p>
+  <button class="edit-button" id="edit-${project.id}">*</button>
+  <button class="remove-button" id="remove-${project.id}">-</button>
+`;
+}
+
+// Adds buttons that allow users to customize projects
+function allowProjectCustomization(project) {
+  const projectContainer = document.getElementById(`project-${project.id}`);
+  const editProjectNameButton = document.getElementById(`edit-${project.id}`);
+  const deleteProjectButton = document.getElementById(`remove-${project.id}`);
+
+  editProjectNameButton.addEventListener("click", () => {
+    changeProjectTitle(project);
+    showProjectContainer(projectContainer, project);
+    showProjectContents(project.id);
+    allowProjectCustomization(project);
+  });
+
+  deleteProjectButton.addEventListener("click", () => {
+    removeProject(project);
+    projectContainer.remove();
+    hideTasks();
   });
 }
 
@@ -127,21 +173,19 @@ function showProjectTasks(project, projectId) {
 function buildProjectContainer(project) {
   const projectContainer = document.getElementById("project-container");
   const addProjectButton = document.getElementById("add-new-project");
+
   const newProject = document.createElement("div");
   newProject.classList.add("project");
   newProject.setAttribute("id", `project-${project.id}`);
 
-  newProject.innerHTML = `
-    <p>${project.title}</p>
-  `;
-
   projectContainer.insertBefore(newProject, addProjectButton);
-  showProjectTasks(newProject, project.id);
+  showProjectContainer(newProject, project);
+  showProjectContents(project.id);
+  allowProjectCustomization(project);
 }
 
 // The '+' button that adds new projects
-// Only needs to be called once
-function addNewProjectButton() {
+function newProjectButton() {
   const addProjectButton = document.getElementById("add-new-project");
 
   addProjectButton.addEventListener("click", () => {
@@ -150,5 +194,14 @@ function addNewProjectButton() {
   });
 }
 
-addNewProjectButton();
+newProjectButton();
 buildProjectContainer(currentProject);
+
+// Tasks:
+
+// - Add a button in the project to remove a project [x]
+// - Add a button in the project to rename a project [x]
+// - Add a button in the task window to remove the task [x]
+// - Improve visuals for all buttons [ ]
+// - Improve visuals for project dashboard [ ]
+// - Improve visuals for task containers [ ]

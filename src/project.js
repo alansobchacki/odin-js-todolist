@@ -1,15 +1,11 @@
-// Your todo list should have projects or separate lists of todos.
-// When a user first opens the app, there should be some sort of ‘default’ project to which
-// all of their todos are put.
-// Users should be able to create new projects and choose which project their todos go into.
-
 import { Task } from "./task";
 
 class Project {
-  constructor(title, task, id) {
+  constructor(title, task, id, deleted) {
     this.title = title;
     this.task = task;
     this.id = id;
+    this.deleted = deleted;
   }
 }
 
@@ -17,7 +13,7 @@ const projects = [];
 let projectCounter = 0;
 let taskCounter = 0;
 
-function addTaskToProject(project) {
+function buildNewTask(project) {
   const task = new Task(
     "Your task.",
     "Description...",
@@ -26,6 +22,7 @@ function addTaskToProject(project) {
     "Notes...",
     false,
     taskCounter,
+    false,
   );
 
   taskCounter += 1;
@@ -34,15 +31,37 @@ function addTaskToProject(project) {
 }
 
 function buildNewProject() {
-  const project = new Project("Your project.", [], projectCounter);
+  const project = new Project("Your project.", [], projectCounter, false);
 
   projectCounter += 1;
 
-  addTaskToProject(project);
+  buildNewTask(project);
   projects.push(project);
+}
+
+function changeProjectTitle(project) {
+  const currentProject = project;
+  const newTitle = prompt("Write your project title (1-16 characters).");
+
+  if (newTitle.length > 1 && newTitle.length < 16) {
+    currentProject.title = newTitle;
+  } else {
+    alert("Invalid title. Please try again.");
+  }
+}
+
+function removeProject(project) {
+  const currentProject = project;
+  currentProject.deleted = true;
 }
 
 buildNewProject();
 
 // eslint-disable-next-line import/prefer-default-export
-export { addTaskToProject, buildNewProject, projects };
+export {
+  buildNewTask,
+  buildNewProject,
+  changeProjectTitle,
+  removeProject,
+  projects,
+};

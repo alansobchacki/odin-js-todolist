@@ -3,7 +3,16 @@
 // You might also want to include notes or even a checklist.
 
 class Task {
-  constructor(title, description, dueDate, priority, notes, checklist, id) {
+  constructor(
+    title,
+    description,
+    dueDate,
+    priority,
+    notes,
+    checklist,
+    id,
+    deleted,
+  ) {
     this.title = title;
     this.description = description;
     this.dueDate = dueDate;
@@ -11,6 +20,7 @@ class Task {
     this.notes = notes;
     this.checklist = checklist;
     this.id = id;
+    this.deleted = deleted;
   }
 }
 
@@ -47,9 +57,15 @@ function changeTaskNotes(task) {
   }
 }
 
-function changeTaskChecklist(task) {
+function deleteTask(task) {
   const currentTask = task;
-  currentTask.checklist = !currentTask.checklist;
+  currentTask.deleted = true;
 }
 
-export { Task, changeTaskTitle, changeTaskDescription, changeTaskNotes };
+export {
+  Task,
+  changeTaskTitle,
+  changeTaskDescription,
+  changeTaskNotes,
+  deleteTask,
+};
