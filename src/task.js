@@ -7,6 +7,7 @@ class Task {
     title,
     description,
     dueDate,
+    priorityCounter,
     priority,
     notes,
     checklist,
@@ -16,6 +17,7 @@ class Task {
     this.title = title;
     this.description = description;
     this.dueDate = dueDate;
+    this.priorityCounter = priorityCounter;
     this.priority = priority;
     this.notes = notes;
     this.checklist = checklist;
@@ -62,10 +64,43 @@ function deleteTask(task) {
   currentTask.deleted = true;
 }
 
+function updateTaskPriority(task) {
+  const currentTask = task;
+
+  switch (task.priorityCounter) {
+    case 1:
+      currentTask.priority = "Low";
+      break;
+    case 2:
+      currentTask.priority = "Medium";
+      break;
+    case 3:
+      currentTask.priority = "High";
+      break;
+    default:
+      currentTask.priority = "Low";
+      break;
+  }
+}
+
+function changeTaskPriority(task, modifier) {
+  const currentTask = task;
+  currentTask.priorityCounter += modifier;
+
+  if (currentTask.priorityCounter > 3) {
+    currentTask.priorityCounter = 3;
+  } else if (currentTask.priorityCounter < 1) {
+    currentTask.priorityCounter = 1;
+  }
+
+  updateTaskPriority(task);
+}
+
 export {
   Task,
   changeTaskTitle,
   changeTaskDescription,
   changeTaskNotes,
+  changeTaskPriority,
   deleteTask,
 };

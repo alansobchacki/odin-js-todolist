@@ -54,6 +54,11 @@ input[type="date"]:hover {
   transition: background-color 0.3s ease;
 }
 
+.project-chosen {
+  border: solid 2px white;
+  border-radius: 6px;
+}
+
 .project:hover {
   background-color: rgb(68, 67, 67);
   cursor: pointer;
@@ -196,6 +201,11 @@ input[type="date"]:hover {
 .task-priority {
   grid-row: 5 / 6;
   grid-column: 1 / 2;
+}
+
+.task-priority-buttons {
+  grid-row: 5 / 6;
+  grid-column: 2 / 3;
 }
 
 .task-button {

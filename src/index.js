@@ -3,6 +3,7 @@ import {
   changeTaskTitle,
   changeTaskDescription,
   changeTaskNotes,
+  changeTaskPriority,
   deleteTask,
 } from "./task";
 import {
@@ -32,7 +33,7 @@ function showTaskContents(taskContainer, task) {
       <h1>${task.title}</h1>
     </div>
     <div class="task-checkbox">
-      ${checkboxInput.outerHTML}
+      <id="checkbox-${task.id}"${checkboxInput.outerHTML}>
     </div>
     <div id="description-${task.id}" class="task-description"> 
       <p>${task.description}</p>
@@ -41,7 +42,7 @@ function showTaskContents(taskContainer, task) {
       <p><i>${task.notes}</i></p>
     </div>
     <div class="task-label">
-      <label>Due Date:</label>
+      <p>Due Date:</p>
     </div>
     <div class="task-due-date">
       ${dateInput.outerHTML}
@@ -49,42 +50,68 @@ function showTaskContents(taskContainer, task) {
     <div class="task-priority"> 
       <p>Priority: ${task.priority}</p>
     </div>
+    <div class="task-priority-buttons">
+      <button id="task-add-button-${task.id}">+</button>
+      <button id="task-subtract-button-${task.id}">-</button>
+    </div>
     <div id="delete-task-${task.id}" class="task-button">
       <button class="remove-button"></button>
     </div>
   `;
 }
 
-// Allows task text-fields to be customized by users
-function allowTaskCustomization(task) {
-  const titleContent = document.getElementById(`title-${task.id}`);
-  const descriptionContent = document.getElementById(`description-${task.id}`);
-  const notesContent = document.getElementById(`notes-${task.id}`);
-  const deleteTaskButton = document.getElementById(`delete-task-${task.id}`);
+// Helper functions for allowTaskCustomization
+function modifiableTaskField(field, task, changeFunction) {
   const updatedTask = document.getElementById(`task-${task.id}`);
 
-  titleContent.addEventListener("click", () => {
-    changeTaskTitle(task);
+  field.addEventListener("click", () => {
+    changeFunction(task);
     showTaskContents(updatedTask, task);
     allowTaskCustomization(task);
   });
+}
 
-  descriptionContent.addEventListener("click", () => {
-    changeTaskDescription(task);
-    showTaskContents(updatedTask, task);
-    allowTaskCustomization(task);
-  });
+function deletableTask(button, task) {
+  const updatedTask = document.getElementById(`task-${task.id}`);
 
-  notesContent.addEventListener("click", () => {
-    changeTaskNotes(task);
-    showTaskContents(updatedTask, task);
-    allowTaskCustomization(task);
-  });
-
-  deleteTaskButton.addEventListener("click", () => {
+  button.addEventListener("click", () => {
     deleteTask(task);
     updatedTask.remove();
   });
+}
+
+function modifiablePriority(button, task, modifier) {
+  const updatedTask = document.getElementById(`task-${task.id}`);
+
+  button.addEventListener("click", () => {
+    changeTaskPriority(task, modifier);
+    showTaskContents(updatedTask, task);
+    allowTaskCustomization(task);
+  });
+}
+
+// Allows tasks to be customized by users
+function allowTaskCustomization(task) {
+  // text fields
+  const titleContent = document.getElementById(`title-${task.id}`);
+  const descriptionContent = document.getElementById(`description-${task.id}`);
+  const notesContent = document.getElementById(`notes-${task.id}`);
+
+  // task buttons
+  const increaseTaskPriorityButton = document.getElementById(
+    `task-add-button-${task.id}`,
+  );
+  const decreaseTaskPriorityButton = document.getElementById(
+    `task-subtract-button-${task.id}`,
+  );
+  const deleteTaskButton = document.getElementById(`delete-task-${task.id}`);
+
+  modifiableTaskField(titleContent, task, changeTaskTitle);
+  modifiableTaskField(descriptionContent, task, changeTaskDescription);
+  modifiableTaskField(notesContent, task, changeTaskNotes);
+  modifiablePriority(increaseTaskPriorityButton, task, 1);
+  modifiablePriority(decreaseTaskPriorityButton, task, -1);
+  deletableTask(deleteTaskButton, task);
 }
 
 // Builds and appends a div with our task
@@ -142,14 +169,32 @@ buildTaskContainer(currentProject.task[0]);
 // DOM manipulation of projects:
 //
 
+// Helper function for highlightProject
+function removeHighlights() {
+  const highlights = document.querySelectorAll("div.project-chosen");
+
+  highlights.forEach((element) => {
+    element.classList.remove("project-chosen");
+  });
+}
+
+// Gives visual indicators to which project is currently selected
+function highlightProject(project) {
+  removeHighlights();
+  const projectContainer = document.getElementById(`project-${project.id}`);
+
+  projectContainer.classList.add("project-chosen");
+}
+
 // Hides tasks from previous project, sets the clicked project as current project,
 // and shows tasks from the new current project
-function showProjectContents(projectId) {
+function showProjectContents(project, projectId) {
   const projectTitle = document.getElementById(`project-title-${projectId}`);
 
   projectTitle.addEventListener("click", () => {
     hideTasks();
     currentProject = projects[projectId];
+    highlightProject(project);
     showTasks();
   });
 }
@@ -174,7 +219,7 @@ function allowProjectCustomization(project) {
   editProjectNameButton.addEventListener("click", () => {
     changeProjectTitle(project);
     showProjectContainer(projectContainer, project);
-    showProjectContents(project.id);
+    showProjectContents(project, project.id);
     allowProjectCustomization(project);
   });
 
@@ -196,7 +241,7 @@ function buildProjectContainer(project) {
 
   projectContainer.insertBefore(newProject, addProjectButton);
   showProjectContainer(newProject, project);
-  showProjectContents(project.id);
+  showProjectContents(project, project.id);
   allowProjectCustomization(project);
 }
 

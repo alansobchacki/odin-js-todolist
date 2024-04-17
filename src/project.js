@@ -18,6 +18,7 @@ function buildNewTask(project) {
     "Insert a title.",
     "Insert a description...",
     "",
+    1,
     "Low",
     "Insert notes...",
     false,
